@@ -2,51 +2,58 @@
 
 using namespace std;
 
-struct street
+struct Street
 {
     int start, end;
     string name;
     int L;
+    int initCars;
 };
-map<string, street> streetmap;
+map<string, Street> streetmap;
 
 struct intersection
 {
     int id;
     vector<string> In, Out;
 };
-map<int, intersection*> intermap;
+map<int, intersection *> intermap;
 
 typedef vector<string> Car;
 
-vector<street> streets;
+vector<Street> streets;
 
 int main()
 {
-    ifstream fin("a.txt");
+    ifstream fin("f.txt");
+    ofstream fout("F.txt");
+
     int D, I, S, V, F;
     fin >> D >> I >> S >> V >> F;
-    streets = vector<street>(S);
+    Street street;
     for (int i = 0; i < S; ++i)
     {
-        fin >> streets[i].start >> streets[i].end >> streets[i].name >> streets[i].L;
-        streetmap[streets[i].name] = streets[i];
-        if(intermap[streets[i].start]==NULL){
-            intermap[streets[i].start] = new intersection;
-            intermap[streets[i].start]->idstreets[i].start;
-            intermap[streets[i].start]->Out.push_back(streets[i].name);
+        fin >> street.start >> street.end >> street.name >> street.L;
+        streetmap[street.name] = street;
+        if (intermap[street.start] == NULL)
+        {
+            intermap[street.start] = new intersection;
+            intermap[street.start]->id = street.start;
+            intermap[street.start]->Out.push_back(street.name);
         }
-        else{
-            intermap[streets[i].start]->Out.push_back(streets[i].name);
+        else
+        {
+            intermap[street.start]->Out.push_back(street.name);
         }
-        
-        if(intermap[streets[i].end]==NULL){
-            intermap[streets[i].end] = new intersection;
-            intermap[streets[i].end]->idstreets[i].end;
-            intermap[streets[i].end]->In.push_back(streets[i].name);
+
+        if (intermap[street.end] == NULL)
+        {
+            intermap[street.end] = new intersection;
+            intermap[street.end]->id = street.end;
+            intermap[street.end]->In.push_back(street.name);
         }
-        else{
-            intermap[streets[i].end]->In.push_back(streets[i].name);
+        else
+        {
+            intermap[street.end]->In.push_back(street.name);
         }
     }
     int n;
@@ -59,9 +66,30 @@ int main()
         for (int j = 0; j < n; ++j)
         {
             fin >> str;
+            if (j == 0)
+            {
+                streetmap[str].initCars++;
+            }
             car.push_back(str);
         }
     }
 
-    
+    fout << intermap.size() << endl;
+    for (auto p : intermap)
+    {
+        intersection *I = p.second;
+        string resultStreet;
+        int maxCars = INT_MIN;
+        for (string streetname : I->In)
+        {
+            if (streetmap[streetname].initCars > maxCars)
+            {
+                maxCars = streetmap[streetname].initCars;
+                resultStreet = streetname;
+            }
+        }
+        fout << I->id << endl;
+        fout << 1 << endl;
+        fout << resultStreet << ' ' << 1 << endl;
+    }
 }
